@@ -42,31 +42,36 @@ let outTxt = ''
 let start = 11554104;
 const end = 11554590; //11554590
 async function capture() {
-  start++;
 
-  const [res, chunk] = await httpsRequest(`http://www.lingdianzw.cc/book/46337/${start}.html`, opt)
-  const $ = cheerio.load(chunk);
-  //  有bug，每次打印出来的字符内容不同
-  const article = $('.showtxt').html()
-  const title = $('title').text().replace('_迎娶女帝之后小说_零点中文网网', '')
-  if (article) {
-    const con = JSON.stringify(article)
-      .replace(/[\x00-\xff]/g, '')
-      .replace(/。/g, '。\r\n')
-      .replace('一秒记住ｈｔｔｐｍ．ｌｉｎｇｄｉａｎｚｗ', '')
-      .replace('天才一秒记住本站地址：', '')
-      .replace('零点中文网手机版阅读网址：', '')
+  try {
+    const [res, chunk] = await httpsRequest(`http://www.lingdianzw.cc/book/46337/${start}.html`, opt)
+    const $ = cheerio.load(chunk);
+    //  有bug，每次打印出来的字符内容不同
+    const article = $('.showtxt').html()
+    const title = $('title').text().replace('_迎娶女帝之后小说_零点中文网网', '')
+    if (article) {
+      const con = JSON.stringify(article)
+        .replace(/[\x00-\xff]/g, '')
+        .replace(/。/g, '。\r\n')
+        .replace('一秒记住ｈｔｔｐｍ．ｌｉｎｇｄｉａｎｚｗ', '')
+        .replace('天才一秒记住本站地址：', '')
+        .replace('零点中文网手机版阅读网址：', '')
 
-    outTxt += `${title}\r\n${con}`
-    if (start === end) {
-      fs.writeFileSync(`./dist/aaa.txt`, outTxt, function (err) {
-        if (!err) {
-          console.log('文件写入完毕');
-        }
-      })
-    } else {
-      capture()
+      outTxt += `${title}\r\n${con}`
+      if (start === end) {
+        fs.writeFileSync(`./dist/bbb.txt`, outTxt, function (err) {
+          if (!err) {
+            console.log('文件写入完毕');
+          }
+        })
+      } else {
+        start++;
+        capture()
+      }
     }
+  }
+  catch (error) {
+    console.log(start);
   }
 }
 
